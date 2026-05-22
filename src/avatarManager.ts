@@ -243,7 +243,7 @@ export class AvatarManager extends Disposable {
 				if (res.statusCode === 200) { // Success
 					let commit: any = JSON.parse(respBody);
 					if (commit.author && commit.author.avatar_url) { // Avatar url found
-						let img = await this.downloadAvatarImage(avatarRequest.email, commit.author.avatar_url + '&size=162');
+						let img = await this.downloadAvatarImage(avatarRequest.email, appendGithubAvatarSize(commit.author.avatar_url));
 						if (img !== null) {
 							this.saveAvatar(avatarRequest.email, img, false);
 						} else {
@@ -552,6 +552,11 @@ class AvatarRequestQueue {
  */
 function maskEmail(email: string) {
 	return email.substring(0, email.indexOf('@')) + '@*****';
+}
+
+function appendGithubAvatarSize(avatarUrl: string) {
+	const parsedUrl = url.parse(avatarUrl);
+	return avatarUrl + (parsedUrl.path === '/' && !avatarUrl.endsWith('/') ? '/&size=162' : '&size=162');
 }
 
 export interface Avatar {

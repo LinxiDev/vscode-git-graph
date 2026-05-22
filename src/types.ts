@@ -249,6 +249,7 @@ export interface GitGraphViewConfig {
 	readonly includeCommitsMentionedByReflogs: boolean;
 	readonly initialLoadCommits: number;
 	readonly keybindings: KeybindingConfig
+	readonly language: GitGraphLanguage;
 	readonly loadMoreCommits: number;
 	readonly loadMoreCommitsAutomatically: boolean;
 	readonly markdown: boolean;
@@ -323,6 +324,9 @@ export interface ReferenceLabelsConfig {
 
 
 /* Extension Settings Types */
+
+export type GitGraphLanguage = 'en' | 'zh-CN';
+export type GitGraphLanguageSetting = 'auto' | GitGraphLanguage;
 
 export const enum BooleanOverride {
 	Default,

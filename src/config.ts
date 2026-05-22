@@ -13,6 +13,8 @@ import {
 	DefaultColumnVisibility,
 	DialogDefaults,
 	FileViewType,
+	GitGraphLanguage,
+	GitGraphLanguageSetting,
 	GitResetMode,
 	GraphConfig,
 	GraphStyle,
@@ -300,6 +302,17 @@ class Config {
 			scrollToHead: this.getKeybinding('keyboardShortcut.scrollToHead', 'h'),
 			scrollToStash: this.getKeybinding('keyboardShortcut.scrollToStash', 's')
 		};
+	}
+
+	/**
+	 * Get the display language used by the Git Graph View.
+	 */
+	get language(): GitGraphLanguage {
+		const language = this.config.get<GitGraphLanguageSetting | string>('language', 'auto');
+		if (language === 'en' || language === 'zh-CN') {
+			return language;
+		}
+		return vscode.env.language.toLowerCase().startsWith('zh') ? 'zh-CN' : 'en';
 	}
 
 	/**

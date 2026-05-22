@@ -3688,6 +3688,19 @@ describe('GitGraphView', () => {
 			expect(mockedWebviewPanel.panel.webview.html).toContain('<script nonce="1a2b3c4d5e6f1a2b3c4d5e6f1a2b3c4d" src="vscode-webview-resource://file///path/to/extension/media/out.min.js"></script>');
 			expect(spyOnIsAvatarStorageAvailable).toHaveBeenCalledWith();
 		});
+
+		it('Should get HTML with the configured Webview language', () => {
+			// Setup
+			vscode.mockExtensionSettingReturnValue('language', 'zh-CN');
+
+			// Run
+			GitGraphView.createOrShow('/path/to/extension', dataSource, extensionState, avatarManager, repoManager, logger, null);
+
+			// Assert
+			const mockedWebviewPanel = vscode.getMockedWebviewPanel(0);
+			expect(mockedWebviewPanel.panel.webview.html).toContain('<html lang="zh-CN">');
+			expect(mockedWebviewPanel.panel.webview.html).toContain('"language":"zh-CN"');
+		});
 	});
 });
 

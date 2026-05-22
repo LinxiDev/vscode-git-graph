@@ -2091,6 +2091,59 @@ describe('Config', () => {
 		});
 	});
 
+	describe('language', () => {
+		it('Should return English when the setting is "en"', () => {
+			// Setup
+			vscode.mockExtensionSettingReturnValue('language', 'en');
+			vscode.mockVscodeLanguage('zh-cn');
+
+			// Run
+			const value = config.language;
+
+			// Assert
+			expect(workspaceConfiguration.get).toBeCalledWith('language', 'auto');
+			expect(value).toBe('en');
+		});
+
+		it('Should return Chinese when the setting is "zh-CN"', () => {
+			// Setup
+			vscode.mockExtensionSettingReturnValue('language', 'zh-CN');
+
+			// Run
+			const value = config.language;
+
+			// Assert
+			expect(workspaceConfiguration.get).toBeCalledWith('language', 'auto');
+			expect(value).toBe('zh-CN');
+		});
+
+		it('Should follow the VS Code language when the setting is "auto"', () => {
+			// Setup
+			vscode.mockExtensionSettingReturnValue('language', 'auto');
+			vscode.mockVscodeLanguage('zh-cn');
+
+			// Run
+			const value = config.language;
+
+			// Assert
+			expect(workspaceConfiguration.get).toBeCalledWith('language', 'auto');
+			expect(value).toBe('zh-CN');
+		});
+
+		it('Should default to English when the setting is invalid and VS Code is not Chinese', () => {
+			// Setup
+			vscode.mockExtensionSettingReturnValue('language', 'invalid');
+			vscode.mockVscodeLanguage('fr');
+
+			// Run
+			const value = config.language;
+
+			// Assert
+			expect(workspaceConfiguration.get).toBeCalledWith('language', 'auto');
+			expect(value).toBe('en');
+		});
+	});
+
 	describe('markdown', testBooleanExtensionSetting('markdown', 'markdown', true));
 
 	describe('maxDepthOfRepoSearch', () => {

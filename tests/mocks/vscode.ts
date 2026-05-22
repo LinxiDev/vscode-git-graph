@@ -86,6 +86,7 @@ export const env = {
 	clipboard: {
 		writeText: jest.fn()
 	},
+	language: 'en',
 	openExternal: jest.fn()
 };
 
@@ -256,6 +257,7 @@ beforeEach(() => {
 	mockedWebviews = [];
 
 	version = '1.51.0';
+	env.language = 'en';
 });
 
 export function mockExtensionSettingReturnValue(section: string, value: any) {
@@ -264,6 +266,10 @@ export function mockExtensionSettingReturnValue(section: string, value: any) {
 
 export function mockVscodeVersion(newVersion: string) {
 	version = newVersion;
+}
+
+export function mockVscodeLanguage(newLanguage: string) {
+	env.language = newLanguage;
 }
 
 export function getMockedWebviewPanel(i: number) {

@@ -682,6 +682,7 @@ export class GitGraphView extends Disposable {
 				includeCommitsMentionedByReflogs: config.includeCommitsMentionedByReflogs,
 				initialLoadCommits: config.initialLoadCommits,
 				keybindings: config.keybindings,
+				language: config.language,
 				loadMoreCommits: config.loadMoreCommits,
 				loadMoreCommitsAutomatically: config.loadMoreCommitsAutomatically,
 				markdown: config.markdown,
@@ -709,21 +710,22 @@ export class GitGraphView extends Disposable {
 			colorParams += '[data-color="' + i + '"]{--git-graph-color:var(--git-graph-color' + i + ');} ';
 		}
 
+		const localize = config.language === 'zh-CN' ? localizeWebviewHtml : (value: string) => value;
 		if (this.dataSource.isGitExecutableUnknown()) {
 			body = `<body class="unableToLoad">
-			<h2>Unable to load Git Graph</h2>
-			<p class="unableToLoadMessage">${UNABLE_TO_FIND_GIT_MSG}</p>
+			<h2>${localize('Unable to load Git Graph')}</h2>
+			<p class="unableToLoadMessage">${localize(UNABLE_TO_FIND_GIT_MSG)}</p>
 			</body>`;
 		} else if (numRepos > 0) {
 			body = `<body>
 			<div id="view" tabindex="-1">
 				<div id="controls">
-					<span id="repoControl"><span class="unselectable">Repo: </span><div id="repoDropdown" class="dropdown"></div></span>
-					<span id="branchControl"><span class="unselectable">Branches: </span><div id="branchDropdown" class="dropdown"></div></span>
-					<label id="showRemoteBranchesControl"><input type="checkbox" id="showRemoteBranchesCheckbox" tabindex="-1"><span class="customCheckbox"></span>Show Remote Branches</label>
-					<div id="findBtn" title="Find"></div>
-					<div id="terminalBtn" title="Open a Terminal for this Repository"></div>
-					<div id="settingsBtn" title="Repository Settings"></div>
+					<span id="repoControl"><span class="unselectable">${localize('Repo:')} </span><div id="repoDropdown" class="dropdown"></div></span>
+					<span id="branchControl"><span class="unselectable">${localize('Branches:')} </span><div id="branchDropdown" class="dropdown"></div></span>
+					<label id="showRemoteBranchesControl"><input type="checkbox" id="showRemoteBranchesCheckbox" tabindex="-1"><span class="customCheckbox"></span>${localize('Show Remote Branches')}</label>
+					<div id="findBtn" title="${localize('Find')}"></div>
+					<div id="terminalBtn" title="${localize('Open a Terminal for this Repository')}"></div>
+					<div id="settingsBtn" title="${localize('Repository Settings')}"></div>
 					<div id="fetchBtn"></div>
 					<div id="refreshBtn"></div>
 				</div>
@@ -739,10 +741,10 @@ export class GitGraphView extends Disposable {
 			</body>`;
 		} else {
 			body = `<body class="unableToLoad">
-			<h2>Unable to load Git Graph</h2>
-			<p class="unableToLoadMessage">No Git repositories were found in the current workspace when it was last scanned by Git Graph.</p>
-			<p>If your repositories are in subfolders of the open workspace folder(s), make sure you have set the Git Graph Setting "git-graph.maxDepthOfRepoSearch" appropriately (read the <a href="https://github.com/mhutchie/vscode-git-graph/wiki/Extension-Settings#max-depth-of-repo-search" target="_blank">documentation</a> for more information).</p>
-			<p><div id="rescanForReposBtn" class="roundedBtn">Re-scan the current workspace for repositories</div></p>
+			<h2>${localize('Unable to load Git Graph')}</h2>
+			<p class="unableToLoadMessage">${localize('No Git repositories were found in the current workspace when it was last scanned by Git Graph.')}</p>
+			<p>${localize('If your repositories are in subfolders of the open workspace folder(s), make sure you have set the Git Graph Setting "git-graph.maxDepthOfRepoSearch" appropriately (read the')} <a href="https://github.com/LinxiDev/vscode-git-graph/wiki/Extension-Settings#max-depth-of-repo-search" target="_blank">${localize('documentation')}</a> ${localize('for more information).')}</p>
+			<p><div id="rescanForReposBtn" class="roundedBtn">${localize('Re-scan the current workspace for repositories')}</div></p>
 			<script nonce="${nonce}">(function(){ var api = acquireVsCodeApi(); document.getElementById('rescanForReposBtn').addEventListener('click', function(){ api.postMessage({command: 'rescanForRepos'}); }); })();</script>
 			</body>`;
 		}
@@ -750,7 +752,7 @@ export class GitGraphView extends Disposable {
 		this.loadViewTo = null;
 
 		return `<!DOCTYPE html>
-		<html lang="en">
+		<html lang="${config.language}">
 			<head>
 				<meta charset="UTF-8">
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${standardiseCspSource(this.panel.webview.cspSource)} 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src data:;">
@@ -825,5 +827,38 @@ export function standardiseCspSource(cspSource: string) {
 		return endOfAuthorityIndex > -1 ? cspSource.substring(0, endOfAuthorityIndex) : cspSource;
 	} else {
 		return cspSource;
+	}
+}
+
+function localizeWebviewHtml(value: string) {
+	switch (value) {
+		case 'Unable to load Git Graph':
+			return '无法加载 Git Graph';
+		case UNABLE_TO_FIND_GIT_MSG:
+			return '无法找到 Git 可执行文件。请确保已安装 Git，并且可以从 PATH 中访问。';
+		case 'Repo:':
+			return '仓库：';
+		case 'Branches:':
+			return '分支：';
+		case 'Show Remote Branches':
+			return '显示远程分支';
+		case 'Find':
+			return '查找';
+		case 'Open a Terminal for this Repository':
+			return '为此仓库打开终端';
+		case 'Repository Settings':
+			return '仓库设置';
+		case 'No Git repositories were found in the current workspace when it was last scanned by Git Graph.':
+			return 'Git Graph 上次扫描当前工作区时没有找到 Git 仓库。';
+		case 'If your repositories are in subfolders of the open workspace folder(s), make sure you have set the Git Graph Setting "git-graph.maxDepthOfRepoSearch" appropriately (read the':
+			return '如果仓库位于已打开工作区文件夹的子文件夹中，请确认已正确设置 Git Graph 配置 "git-graph.maxDepthOfRepoSearch"（阅读';
+		case 'documentation':
+			return '文档';
+		case 'for more information).':
+			return '了解更多信息）。';
+		case 'Re-scan the current workspace for repositories':
+			return '重新扫描当前工作区中的仓库';
+		default:
+			return value;
 	}
 }
