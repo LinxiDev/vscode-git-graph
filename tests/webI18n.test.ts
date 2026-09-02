@@ -67,7 +67,7 @@ describe('Web i18n', () => {
 	it('Should translate long info and description text', () => {
 		expect(translateHtml('Force the local branch to be reset to this remote branch.')).toBe('强制将本地分支重置为此远程分支。');
 		expect(translateHtml('Only applicable to a non-interactive rebase.')).toBe('仅适用于非交互式变基。');
-		expect(translateHtml('Include all untracked files in the stash, and then clean them from the working directory.')).toBe('将所有未跟踪文件包含在贮藏中，然后从工作目录中清理它们。');
+		expect(translateHtml('Include all untracked files in the stash, and then clean them from the working directory.')).toBe('将所有未跟踪文件包含在暂存中，然后从工作目录中清理它们。');
 	});
 
 	it('Should translate commit details labels and messages', () => {
